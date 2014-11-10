@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/drawer_grouping_padding"
+    android:paddingTop="@dimen/drawer_grouping_padding">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/drawer_item_height">
+
+        <ImageView
+            android:id="@+id/footer_icon1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:paddingLeft="@dimen/drawer_left"
+            android:src="@drawable/ic_settings" />
+
+        <TextView
+            android:id="@+id/footer_text1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:ellipsize="end"
+            android:paddingLeft="@dimen/drawer_text_with_icon"
+            android:paddingRight="@dimen/drawer_right"
+            android:text="Settings"
+            android:textColor="@color/text"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/drawer_item_height">
+
+        <ImageView
+            android:id="@+id/footer_icon2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:paddingLeft="@dimen/drawer_left"
+            android:src="@drawable/ic_help" />
+
+        <TextView
+            android:id="@+id/footer_text2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:ellipsize="end"
+            android:paddingLeft="@dimen/drawer_text_with_icon"
+            android:paddingRight="@dimen/drawer_right"
+            android:text="Feedback"
+            android:textColor="@color/text"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+
+</LinearLayout>

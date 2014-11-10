@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Material Menu Drawer</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello World!</string>
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
+
+    <plurals name="numberOfNewArticles">
+        <item quantity="one">%d new</item>
+        <item quantity="other">%d new</item>
+    </plurals>
+
+    <string-array name="drawer_titles">
+        <item>News</item>
+        <item>Sales</item>
+        <item>Blog</item>
+        <item>Favorites</item>
+        <item>Google+ Community</item>
+    </string-array>
+
+    <array name="drawer_icons">
+        <item>@drawable/ic_apps</item>
+        <item>@drawable/ic_sales</item>
+        <item>@drawable/ic_blog</item>
+        <item>@drawable/ic_bookmark</item>
+        <item>@drawable/ic_community</item>
+    </array>
+
+    <string-array name="footer_titles">
+        <item>Settings</item>
+        <item>Feedback</item>
+    </string-array>
+
+    <array name="footer_icons">
+        <item>@drawable/ic_settings</item>
+        <item>@drawable/ic_help</item>
+    </array>
+
+</resources>
