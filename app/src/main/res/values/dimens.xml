@@ -3,6 +3,11 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <!-- Toolbar -->
+    <dimen name="toolbar_height_phone_land">48dp</dimen>
+    <dimen name="toolbar_height_phone_port">56dp</dimen>
+    <dimen name="toolbar_height_tablet">64dp</dimen>
+
     <!-- Navigation Drawer -->
     <dimen name="drawer_top">24dp</dimen>
     <dimen name="drawer_left">16dp</dimen>
@@ -11,5 +16,14 @@
     <dimen name="drawer_header_text">56dp</dimen>
     <dimen name="drawer_grouping_padding">8dp</dimen>
     <dimen name="drawer_item_height">48dp</dimen>
+    <dimen name="drawer_min_width_phone">320dp</dimen>
+    <dimen name="drawer_min_width_tablet">400dp</dimen>
+
+    <!-- ListView -->
+
+
+    <!-- FAB -->
+    <dimen name="fab_big">54dp</dimen>
+    <dimen name="fab_small">40dp</dimen>
 
 </resources>

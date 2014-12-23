@@ -38,4 +38,8 @@
     <color name="google_text_disabled">#737373</color>
     <color name="google_text">#ffffff</color>
 
+    <color name="refresh_progress_1">@color/accent_color_light</color>
+    <color name="refresh_progress_2">@color/accent_color_dark</color>
+    <color name="refresh_progress_3">@color/primary_color</color>
+
 </resources>

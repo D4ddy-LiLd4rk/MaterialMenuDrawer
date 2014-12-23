@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp">
+
+    <CheckBox
+        android:id="@+id/dialogMultiCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp" />
+
+    <TextView
+        android:id="@+id/dialogMultiText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:ellipsize="end"
+        android:paddingLeft="@dimen/drawer_text_with_icon"
+        android:paddingRight="@dimen/drawer_right"
+        android:textColor="@color/text"
+        android:textSize="16sp" />
+
+</RelativeLayout>

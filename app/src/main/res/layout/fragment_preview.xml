@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical" >
-            
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -32,6 +32,30 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Pull down to refresh!"
                 android:id="@+id/textView" />
+
+            <Button
+                android:id="@+id/buttonStand"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="standard dialog"/>
+
+            <Button
+                android:id="@+id/buttonSingle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="traditional single-choice dialog"/>
+
+            <Button
+                android:id="@+id/buttonPersSingle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="persistent single-choice dialog" />
+
+            <Button
+                android:id="@+id/buttonMulti"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="persistent multiple-choice dialog" />
 
         </LinearLayout>
 

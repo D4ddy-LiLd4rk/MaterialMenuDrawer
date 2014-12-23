@@ -1,13 +1,18 @@
 package com.brobox.materialmenudrawer.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -17,23 +22,31 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.brobox.materialmenudrawer.R;
 import com.brobox.materialmenudrawer.adapter.DrawerAdapter;
+import com.brobox.materialmenudrawer.dialog.Multi_Dialog;
+import com.brobox.materialmenudrawer.dialog.Radio_Dialog;
+import com.brobox.materialmenudrawer.dialog.Single_Dialog;
+import com.brobox.materialmenudrawer.dialog.Standard_Dialog;
 import com.brobox.materialmenudrawer.fragments.Blog_Fragment;
 import com.brobox.materialmenudrawer.fragments.Bookmark_Fragment;
 import com.brobox.materialmenudrawer.fragments.Preview_Fragment;
 import com.brobox.materialmenudrawer.fragments.Sales_Fragment;
 import com.brobox.materialmenudrawer.ui.Items;
+import com.brobox.materialmenudrawer.ui.MultiSwipeRefreshLayout;
 
 import java.util.ArrayList;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements
+        MultiSwipeRefreshLayout.CanChildScrollUpCallback {
 
     private String[] mDrawerTitles;
     private TypedArray mDrawerIcons;
@@ -44,6 +57,11 @@ public class MainActivity extends ActionBarActivity {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
 
+    private static FragmentManager mManager;
+
+    // SwipeRefreshLayout allows the user to swipe the screen down to trigger a manual refresh
+    private MultiSwipeRefreshLayout mSwipeRefreshLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +69,8 @@ public class MainActivity extends ActionBarActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) setSupportActionBar(toolbar);
+
+        mManager = getSupportFragmentManager();
 
         mDrawerTitles = getResources().getStringArray(R.array.drawer_titles);
         mDrawerIcons = getResources().obtainTypedArray(R.array.drawer_icons);
@@ -60,11 +80,6 @@ public class MainActivity extends ActionBarActivity {
         for (int i = 0; i < mDrawerTitles.length; i++) {
             drawerItems.add(new Items(mDrawerTitles[i], mDrawerIcons.getResourceId(i, -(i + 1))));
         }
-
-        // Set the adapter for the list view
-        mDrawerList.setAdapter(new DrawerAdapter(getApplicationContext(), drawerItems));
-        // Set the list's click listener
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         mTitle = mDrawerTitle = getTitle();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -110,6 +125,11 @@ public class MainActivity extends ActionBarActivity {
         lp.width = calculateDrawerWidth();
         mDrawerList.setLayoutParams(lp);
 
+        // Set the adapter for the list view
+        mDrawerList.setAdapter(new DrawerAdapter(getApplicationContext(), drawerItems));
+        // Set the list's click listener
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
     }
@@ -119,6 +139,7 @@ public class MainActivity extends ActionBarActivity {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
+        trySetupSwipeRefresh();
     }
 
     @Override
@@ -146,6 +167,7 @@ public class MainActivity extends ActionBarActivity {
         switch (position) {
             case 0:
                 //Account
+                showMyDialog("Account", "This is a test message for this awesome dialog!", "cancel", "ok");
                 break;
             case 1:
                 //Beiträge
@@ -179,10 +201,11 @@ public class MainActivity extends ActionBarActivity {
 
         // Highlight the selected item, update the title, and close the drawer
         mDrawerList.setItemChecked(position, true);
-        setTitle(mDrawerTitles[position - 1]);
+        if (position != 0) {
+            setTitle(mDrawerTitles[position - 1]);
+            updateView(position, position, true);
+        }
         mDrawerLayout.closeDrawer(mDrawerList);
-
-        updateView(position, position, true);
 
     }
 
@@ -275,11 +298,135 @@ public class MainActivity extends ActionBarActivity {
         if (visible) someText.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public boolean canSwipeRefreshChildScrollUp() {
+        return false;
+    }
+
+    private void trySetupSwipeRefresh() {
+        mSwipeRefreshLayout = (MultiSwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setColorSchemeResources(
+                    R.color.refresh_progress_1,
+                    R.color.refresh_progress_2,
+                    R.color.refresh_progress_3);
+            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    Toast.makeText(getApplication(),"Refresh!", Toast.LENGTH_LONG);
+                }
+            });
+
+            if (mSwipeRefreshLayout instanceof MultiSwipeRefreshLayout) {
+                MultiSwipeRefreshLayout mswrl = (MultiSwipeRefreshLayout) mSwipeRefreshLayout;
+                mswrl.setCanChildScrollUpCallback(this);
+            }
+        }
+    }
+
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
             selectItem(position);
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void circleIn(View view) {
+
+        // get the center for the clipping circle
+        int cx = (view.getLeft() + view.getRight()) / 2;
+        int cy = (view.getTop() + view.getBottom()) / 2;
+
+        // get the final radius for the clipping circle
+        int finalRadius = Math.max(view.getWidth(), view.getHeight());
+
+        // create the animator for this view (the start radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(view, cx, cy, 0, finalRadius);
+
+        // make the view visible and start the animation
+        view.setVisibility(View.VISIBLE);
+        anim.start();
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void circleOut(final View view) {
+
+        // get the center for the clipping circle
+        int cx = (view.getLeft() + view.getRight()) / 2;
+        int cy = (view.getTop() + view.getBottom()) / 2;
+
+        // get the initial radius for the clipping circle
+        int initialRadius = view.getWidth();
+
+        // create the animation (the final radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(view, cx, cy, initialRadius, 0);
+
+        // make the view invisible when the animation is done
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                view.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        // start the animation
+        anim.start();
+    }
+
+    /**
+     * Sets the components of the standard dialog.
+     *
+     * @param title Title of the dialog
+     * @param message Message of the dialog
+     * @param negativeButton Text of negative Button
+     * @param positiveButton Text of postive Button
+     */
+    public static void showMyDialog(String title, String message, String negativeButton, String positiveButton) {
+        Standard_Dialog newDialog = Standard_Dialog.newInstance(title, message, negativeButton, positiveButton);
+        newDialog.show(mManager, "dialog");
+    }
+
+    /**
+     * Sets the components of the traditional single-choice dialog.
+     *
+     * @param title Title of the dialog
+     * @param dialogItems Content of the dialog
+     * @param negativeButton Text of negative Button
+     * @param positiveButton Text of postive Button
+     */
+    public static void showMySingleDialog(String title, ArrayList<String> dialogItems, String negativeButton, String positiveButton) {
+        Single_Dialog newDialog = Single_Dialog.newInstance(title, dialogItems, negativeButton, positiveButton);
+        newDialog.show(mManager, "dialog");
+    }
+
+    /**
+     * Sets the components of the persistent single-choice dialog.
+     *
+     * @param title Title of the dialog
+     * @param dialogItems Content of the dialog
+     * @param negativeButton Text of negative Button
+     * @param positiveButton Text of postive Button
+     */
+    public static void showMyRadioDialog(String title, ArrayList<String> dialogItems, String negativeButton, String positiveButton) {
+        Radio_Dialog newDialog = Radio_Dialog.newInstance(title, dialogItems, negativeButton, positiveButton);
+        newDialog.show(mManager, "dialog");
+    }
+
+    /**
+     * Sets the components of the persistent multiple-choice dialog.
+     *
+     * @param title Title of the dialog
+     * @param dialogItems Content of the dialog
+     * @param negativeButton Text of negative Button
+     * @param positiveButton Text of postive Button
+     */
+    public static void showMyMultiDialog(String title, ArrayList<String> dialogItems, String negativeButton, String positiveButton) {
+        Multi_Dialog newDialog = Multi_Dialog.newInstance(title, dialogItems, negativeButton, positiveButton);
+        newDialog.show(mManager, "dialog");
     }
 
 }

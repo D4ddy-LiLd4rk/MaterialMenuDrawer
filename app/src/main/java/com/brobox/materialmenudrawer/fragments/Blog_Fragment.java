@@ -14,9 +14,14 @@ import com.brobox.materialmenudrawer.R;
  */
 public class Blog_Fragment extends Fragment {
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_preview, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_blog, container, false);
+
+
+
         return rootView;
     }
 
