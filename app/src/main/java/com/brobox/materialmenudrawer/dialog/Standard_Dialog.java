@@ -27,7 +27,9 @@ public class Standard_Dialog extends DialogFragment implements View.OnClickListe
     private Button dialogNegativeButton;
     private Button dialogPositiveButton;
 
-    public static Standard_Dialog newInstance(String title, String message, String negativeButton, String positiveButton) {
+    private static MyDialogListener myDialogListener;
+
+    public static Standard_Dialog newInstance(String title, String message, String negativeButton, String positiveButton, MyDialogListener dialogListener) {
         Standard_Dialog f = new Standard_Dialog();
 
         Bundle args = new Bundle();
@@ -36,6 +38,8 @@ public class Standard_Dialog extends DialogFragment implements View.OnClickListe
         args.putString(KEY_NEGATIVEBUTTON, negativeButton);
         args.putString(KEY_POSITIVEBUTTON, positiveButton);
         f.setArguments(args);
+
+        myDialogListener = dialogListener;
 
         return f;
     }
@@ -71,11 +75,16 @@ public class Standard_Dialog extends DialogFragment implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.dialogButtonNegative) {
-            dismiss();
+            myDialogListener.onDialogNegativeClick(this);
         }
         if (v.getId() == R.id.dialogButtonPositive) {
-            dismiss();
+            myDialogListener.onDialogPositiveClick(this);
         }
 
+    }
+
+    public interface MyDialogListener {
+        void onDialogPositiveClick(DialogFragment dialog);
+        void onDialogNegativeClick(DialogFragment dialog);
     }
 }

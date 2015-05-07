@@ -3,12 +3,14 @@ package com.brobox.materialmenudrawer.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -49,6 +51,7 @@ public class MainActivity extends ActionBarActivity implements
         MultiSwipeRefreshLayout.CanChildScrollUpCallback {
 
     private String[] mDrawerTitles;
+    private String[] mFooterTitles;
     private TypedArray mDrawerIcons;
     private ArrayList<Items> drawerItems;
     private DrawerLayout mDrawerLayout;
@@ -73,6 +76,7 @@ public class MainActivity extends ActionBarActivity implements
         mManager = getSupportFragmentManager();
 
         mDrawerTitles = getResources().getStringArray(R.array.drawer_titles);
+        mFooterTitles = getResources().getStringArray(R.array.footer_titles);
         mDrawerIcons = getResources().obtainTypedArray(R.array.drawer_icons);
         drawerItems = new ArrayList<Items>();
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
@@ -167,7 +171,17 @@ public class MainActivity extends ActionBarActivity implements
         switch (position) {
             case 0:
                 //Account
-                showMyDialog("Account", "This is a test message for this awesome dialog!", "cancel", "ok");
+                showMyDialog("Account", "This is a test message for this awesome dialog!", "cancel", "ok", new Standard_Dialog.MyDialogListener() {
+                    @Override
+                    public void onDialogPositiveClick(DialogFragment dialog) {
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onDialogNegativeClick(DialogFragment dialog) {
+                        dialog.dismiss();
+                    }
+                });
                 break;
             case 1:
                 //Beiträge
@@ -207,6 +221,38 @@ public class MainActivity extends ActionBarActivity implements
         }
         mDrawerLayout.closeDrawer(mDrawerList);
 
+    }
+
+    public void footerClick(View view) {
+
+        Fragment fragment = null;
+        boolean settingsCheck = false;
+        mDrawerLayout.closeDrawer(mDrawerList);
+
+        if (view.getId() == R.id.footer_text1) {
+            //Settings
+            fragment = new Preview_Fragment();
+            mTitle = mFooterTitles[0];
+        } else if (view.getId() == R.id.footer_text2) {
+            //Help
+            fragment = new Preview_Fragment();
+            mTitle = mDrawerTitles[1];
+        }
+
+        if (!settingsCheck && fragment != null) {
+            // update the main content by replacing fragments
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_content, fragment)
+                    .commit();
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            if (!settingsCheck && getFragmentManager().findFragmentByTag("preference") != null) {
+
+                getFragmentManager().beginTransaction().remove(getFragmentManager().findFragmentByTag("preference")).commit();
+            }
+        }
     }
 
     @Override
@@ -384,9 +430,10 @@ public class MainActivity extends ActionBarActivity implements
      * @param message Message of the dialog
      * @param negativeButton Text of negative Button
      * @param positiveButton Text of postive Button
+     * @param myDialogListener Listener Interface
      */
-    public static void showMyDialog(String title, String message, String negativeButton, String positiveButton) {
-        Standard_Dialog newDialog = Standard_Dialog.newInstance(title, message, negativeButton, positiveButton);
+    public static void showMyDialog(String title, String message, String negativeButton, String positiveButton, Standard_Dialog.MyDialogListener myDialogListener) {
+        Standard_Dialog newDialog = Standard_Dialog.newInstance(title, message, negativeButton, positiveButton, myDialogListener);
         newDialog.show(mManager, "dialog");
     }
 
@@ -397,9 +444,10 @@ public class MainActivity extends ActionBarActivity implements
      * @param dialogItems Content of the dialog
      * @param negativeButton Text of negative Button
      * @param positiveButton Text of postive Button
+     * @param myDialogListener Listener Interface
      */
-    public static void showMySingleDialog(String title, ArrayList<String> dialogItems, String negativeButton, String positiveButton) {
-        Single_Dialog newDialog = Single_Dialog.newInstance(title, dialogItems, negativeButton, positiveButton);
+    public static void showMySingleDialog(String title, ArrayList<String> dialogItems, String negativeButton, String positiveButton, Single_Dialog.MyDialogListener myDialogListener) {
+        Single_Dialog newDialog = Single_Dialog.newInstance(title, dialogItems, negativeButton, positiveButton, myDialogListener);
         newDialog.show(mManager, "dialog");
     }
 

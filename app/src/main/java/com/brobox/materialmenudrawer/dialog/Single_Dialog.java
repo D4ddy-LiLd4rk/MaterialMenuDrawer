@@ -32,7 +32,9 @@ public class Single_Dialog extends DialogFragment implements View.OnClickListene
     private Button dialogNegativeButton;
     private Button dialogPositiveButton;
 
-    public static Single_Dialog newInstance(String title, ArrayList<String> dialogItems, String negativeButton, String positiveButton) {
+    private static MyDialogListener myDialogListener;
+
+    public static Single_Dialog newInstance(String title, ArrayList<String> dialogItems, String negativeButton, String positiveButton, MyDialogListener dialogListener) {
         Single_Dialog f = new Single_Dialog();
 
         Bundle args = new Bundle();
@@ -41,6 +43,8 @@ public class Single_Dialog extends DialogFragment implements View.OnClickListene
         args.putString(KEY_NEGATIVEBUTTON, negativeButton);
         args.putString(KEY_POSITIVEBUTTON, positiveButton);
         f.setArguments(args);
+
+        myDialogListener = dialogListener;
 
         return f;
     }
@@ -78,16 +82,22 @@ public class Single_Dialog extends DialogFragment implements View.OnClickListene
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.dialogButtonNegative) {
-            dismiss();
+            myDialogListener.onDialogNegativeClick(this);
         }
         if (v.getId() == R.id.dialogButtonPositive) {
-            dismiss();
+            myDialogListener.onDialogPositiveClick(this);
         }
 
     }
 
+    public interface MyDialogListener {
+        void onDialogPositiveClick(DialogFragment dialog);
+        void onDialogNegativeClick(DialogFragment dialog);
+        void onDialogItemClick(DialogFragment dialog, View view, int position);
+    }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        myDialogListener.onDialogItemClick(this, view, position);
     }
 }
